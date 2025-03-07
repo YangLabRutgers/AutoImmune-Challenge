@@ -42,9 +42,3 @@ class UNet_Decoder_Layer(nn.Module):
         
         self.upsample = nn.Upsample(scale_factor=2,mode=up_mode)
         
-
-
-        
-        
-        
-        
