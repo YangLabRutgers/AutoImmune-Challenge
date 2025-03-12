@@ -4,21 +4,28 @@ from torch_geometric.nn import ChebConv
 from torch_geometric.nn import aggr
 from torch_geometric.nn import models
 
+"""
+Default GNN class comprised of Chebyshev convolutional 
+layer, mean aggregation across the 3 channels, one 
+dense layer and an embedding layer.
 
 
+"""
 class default_gnn(nn.Module):
     
-    def __init__(self, in_channels:int, 
-                 conv_out_channels:int,
-                 edges:int,
-                 k_filter_size: int,
-                 dense_layer_in:int,
-                 dense_layer_out: int,
-                 num_embeddings:int,
-                 embedding_dims:int
+    def __init__(self, nodes: int,
+                 edges:int, 
+                 k_filter_size = 1,
+                 in_channels = -1, 
+                 conv_out_channels = 3,
+                 embedding_dims = 10,**kwargs
                 ):
         
         super().__init__()
+        
+        self.dense_layer_in = kwargs.get('dense_layer_in',nodes)
+        
+        self.dense_layer_out = kwargs.get('dense_layer_out',nodes)
         
         self.gcl = ChebConv(
             in_channels = in_channels, 
@@ -27,33 +34,31 @@ class default_gnn(nn.Module):
             )
 
         self.dense_layer = nn.Linear(
-            in_features = dense_layer_in, 
-            out_features = dense_layer_out
+            in_features = self.dense_layer_in, 
+            out_features = self.dense_layer_out
             )
         
-        # self.final_node_embedding = nn.Linear(
-        #     in_features=num_embeddings,
-        #     out_features=embedding_dims
-        # )
-        
-        self.final_node_embedding = 
+        self.final_node_embedding = nn.Linear(
+            in_features=nodes,
+            out_features=embedding_dims
+        )
         
         self.edges = edges
         
-    def forward(self,x):
-        print(f"x  {x.size()}")
-        x = self.gcl(x,torch.randint(low=0,high=1,size=(2,self.edges)))
-        print(f"x  {x.size()}")
+    def forward(self,x,edge_index):
+        
+        x = self.gcl(x,edge_index)
+        
         x = aggr.MeanAggregation()(x,dim=-1)
-        print(f"x  {x.size()}")
+        
         x = x.squeeze()
-        print(f"x  {x.size()}")
+        
         x = self.dense_layer(x) 
-        print(f"x  {x.size()}")   
+        
         x = x.T
-        print(f"x  {x.size()}")   
+        
         x = self.final_node_embedding(x)
-        print(f"x final embedding {x.size()}")
+        
         return x
 
 
@@ -63,18 +68,12 @@ def test(n:int,m:int):
     
     x = torch.randint(0,1,(n,n,3)).to(torch.float)
     
+    edge_index = torch.randint(0,1,[2,n*n])
     
     model = default_gnn(
-        in_channels=-1,
-        conv_out_channels=3,
-        edges=100,
-        k_filter_size=1,
-        dense_layer_in = n,
-        dense_layer_out = 10,
-        num_embeddings=n,
-        embedding_dims=m
+        nodes = n, edges = m
         )
     
-    return model(x).size()
+    return model(x,edge_index).size()
 
 test(10,60)
