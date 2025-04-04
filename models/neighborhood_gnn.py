@@ -29,7 +29,6 @@ resulting in n nodes, each with m dims
 
 """
 class default_gnn(nn.Module):
-    
     def __init__(self, nodes: int,
                  edges:int, 
                  k_filter_size = 1,
@@ -63,7 +62,6 @@ class default_gnn(nn.Module):
         self.edges = edges
         
     def forward(self,x,edge_index):
-        
         x = self.gcl(x,edge_index)
         
         x = aggr.MeanAggregation()(x,dim=-1)
