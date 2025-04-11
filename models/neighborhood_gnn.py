@@ -40,40 +40,29 @@ class default_gnn(nn.Module):
         super().__init__()
         
         self.dense_layer_in = kwargs.get('dense_layer_in',nodes)
-        
         self.dense_layer_out = kwargs.get('dense_layer_out',nodes)
-        
         self.gcl = ChebConv(
             in_channels = in_channels, 
             out_channels = conv_out_channels,
             K = k_filter_size
             )
-
         self.dense_layer = nn.Linear(
             in_features = self.dense_layer_in, 
             out_features = self.dense_layer_out
             )
-        
         self.final_node_embedding = nn.Linear(
             in_features=nodes,
             out_features=embedding_dims
         )
-        
         self.edges = edges
         
     def forward(self,x,edge_index):
         x = self.gcl(x,edge_index)
-        
         x = aggr.MeanAggregation()(x,dim=-1)
-        
         x = x.squeeze() #[n X n X 1] -> [n X n]
-        
         x = self.dense_layer(x) 
-        
         x = x.T
-        
         x = self.final_node_embedding(x)
-        
         return x
 
 

@@ -2,12 +2,12 @@ import torch
 import torch.nn as nn
 import torch.functional as F
 import math
-from modules.Attention import DotAttention, EfficientAttention
+from modules.Attention import *
 
 class TransformerEncoderLayer(nn.Module):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+        self.multihead_attention = MultiHeadSelfDotAttention()
         
 
 class Transformer(nn.Module):
@@ -18,4 +18,4 @@ class Transformer(nn.Module):
         self.encoder = []
         self.decoder = []
 
-            
+model = nn.T
