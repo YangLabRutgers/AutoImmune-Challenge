@@ -3,7 +3,7 @@ import torch
 import os
 import timm
 
-# 🛡️ Check for Hugging Face login
+# Check for Hugging Face login
 if not os.path.exists(os.path.expanduser("~/.huggingface/token")):
     raise RuntimeError("You must login to Hugging Face first")
 
