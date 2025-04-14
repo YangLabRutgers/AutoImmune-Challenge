@@ -2,8 +2,8 @@
 
 from huggingface_hub import login
 
-print("🔐 Hugging Face Login")
-print("👉 Please paste your Hugging Face access token below.")
+print("Hugging Face Login")
+print("Please paste your Hugging Face access token below.")
 print("You can get it from https://huggingface.co/settings/tokens")
 
 login()
