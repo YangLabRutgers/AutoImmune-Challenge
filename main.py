@@ -5,6 +5,8 @@ import argparse
 from modules.unet_utils import *
 from models import *
 
+# Data is on /home/xh300/link/IBD
+
 
 # assert torch.cuda.is_available()
 

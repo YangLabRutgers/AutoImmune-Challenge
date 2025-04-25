@@ -6,3 +6,4 @@
 errors/*
 outputs/*
 */__pycache__
+access_key.txt
